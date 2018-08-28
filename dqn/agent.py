@@ -87,7 +87,8 @@ class Agent(BaseModel):
                     except:
                         max_ep_reward, min_ep_reward, avg_ep_reward = 0, 0, 0
 
-                    print('\navg_r: %.4f, avg_l: %.6f, avg_q: %3.6f, avg_ep_r: %.4f, max_ep_r: %.4f, min_ep_r: %.4f, # game: %d' \
+                    print(
+                        '\navg_r: %.4f, avg_l: %.6f, avg_q: %3.6f, avg_ep_r: %.4f, max_ep_r: %.4f, min_ep_r: %.4f, # game: %d' \
                         % (avg_reward, avg_loss, avg_q, avg_ep_reward, max_ep_reward, min_ep_reward, num_game))
 
                     if max_avg_ep_reward * 0.9 <= avg_ep_reward:
@@ -204,7 +205,7 @@ class Agent(BaseModel):
         self.w = {}
         self.t_w = {}
 
-        #initializer = tf.contrib.layers.xavier_initializer()
+        # initializer = tf.contrib.layers.xavier_initializer()
         initializer = tf.truncated_normal_initializer(0, 0.02)
         activation_fn = tf.nn.relu
 
@@ -249,10 +250,10 @@ class Agent(BaseModel):
                     linear(self.l3_flat, 512, activation_fn=activation_fn, name='adv_hid')
 
                 self.value, self.w['val_w_out'], self.w['val_w_b'] = \
-                  linear(self.value_hid, 1, name='value_out')
+                    linear(self.value_hid, 1, name='value_out')
 
                 self.advantage, self.w['adv_w_out'], self.w['adv_w_b'] = \
-                  linear(self.adv_hid, self.env.action_size, name='adv_out')
+                    linear(self.adv_hid, self.env.action_size, name='adv_out')
 
                 # Average Dueling
                 self.q = self.value + (
@@ -326,10 +327,10 @@ class Agent(BaseModel):
                     linear(self.target_l3_flat, 512, activation_fn=activation_fn, name='target_adv_hid')
 
                 self.t_value, self.t_w['val_w_out'], self.t_w['val_w_b'] = \
-                  linear(self.t_value_hid, 1, name='target_value_out')
+                    linear(self.t_value_hid, 1, name='target_value_out')
 
                 self.t_advantage, self.t_w['adv_w_out'], self.t_w['adv_w_b'] = \
-                  linear(self.t_adv_hid, self.env.action_size, name='target_adv_out')
+                    linear(self.t_adv_hid, self.env.action_size, name='target_adv_out')
 
                 # Average Dueling
                 self.target_q = self.t_value + (
@@ -500,4 +501,4 @@ class Agent(BaseModel):
 
         if not self.display:
             self.env.env.monitor.close()
-            #gym.upload(gym_dir, writeup='https://github.com/devsisters/DQN-tensorflow', api_key='')
+            # gym.upload(gym_dir, writeup='https://github.com/devsisters/DQN-tensorflow', api_key='')

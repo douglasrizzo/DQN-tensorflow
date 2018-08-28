@@ -12,6 +12,7 @@ try:
     from scipy.misc import imresize
 except:
     import cv2
+
     imresize = cv2.resize
 
 

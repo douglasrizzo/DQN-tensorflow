@@ -21,7 +21,7 @@ class Environment(object):
         self.terminal = True
 
     def new_game(self, from_random_game=False):
-        #if self.lives == 0:
+        # if self.lives == 0:
         self._screen = self.env.reset()
         self._step(0)
         self.render()
@@ -44,7 +44,7 @@ class Environment(object):
     @property
     def screen(self):
         return imresize(rgb2gray(self._screen) / 255., self.dims)
-        #return cv2.resize(cv2.cvtColor(self._screen, cv2.COLOR_BGR2YCR_CB)/255., self.dims)[:,:,0]
+        # return cv2.resize(cv2.cvtColor(self._screen, cv2.COLOR_BGR2YCR_CB)/255., self.dims)[:,:,0]
 
     @property
     def action_size(self):

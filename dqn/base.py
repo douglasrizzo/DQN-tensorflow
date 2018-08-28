@@ -12,7 +12,7 @@ def class_vars(obj):
 
 
 class BaseModel(object):
-    """Abstract object representing an Reader model."""
+    """Abstract object representing a Reader model."""
 
     def __init__(self, config):
         self._saver = None
