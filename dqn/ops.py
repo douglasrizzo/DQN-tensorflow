@@ -35,7 +35,7 @@ def conv2d(
     b = tf.get_variable('biases', [output_dim], initializer=tf.constant_initializer(0.0))
     out = tf.nn.bias_add(conv, b, data_format)
 
-  if activation_fn != None:
+  if activation_fn is not None:
     out = activation_fn(out)
 
   return out, w, b
@@ -52,7 +52,7 @@ def linear(input_, output_size, stddev=0.02, bias_start=0.0, activation_fn=None,
 
     out = tf.nn.bias_add(tf.matmul(input_, w), b)
 
-    if activation_fn != None:
+    if activation_fn is not None:
       return activation_fn(out), w, b
     else:
       return out, w, b

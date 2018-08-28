@@ -1,10 +1,11 @@
-import time
-import numpy as np
-import tensorflow as tf
 import sys
-if (sys.version_info[0] == 2):
+import time
+
+import numpy as np
+
+if sys.version_info[0] == 2:
   import cPickle
-elif (sys.version_info[0] == 3):
+elif sys.version_info[0] == 3:
   import _pickle as cPickle
 
 try:

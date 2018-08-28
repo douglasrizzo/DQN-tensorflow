@@ -374,8 +374,8 @@ class Agent(BaseModel):
       ).minimize(self.loss)
 
     with tf.variable_scope('summary'):
-      scalar_summary_tags = ['average.reward', 'average.loss', 'average.q', \
-          'episode.max reward', 'episode.min reward', 'episode.avg reward', 'episode.num of game', 'training.learning_rate']
+      scalar_summary_tags = ['average.reward', 'average.loss', 'average.q',
+                             'episode.max reward', 'episode.min reward', 'episode.avg reward', 'episode.num of game', 'training.learning_rate']
 
       self.summary_placeholders = {}
       self.summary_ops = {}
@@ -442,7 +442,7 @@ class Agent(BaseModel):
       self.writer.add_summary(summary_str, self.step)
 
   def play(self, n_step=10000, n_episode=100, test_ep=None, render=False):
-    if test_ep == None:
+    if test_ep is None:
       test_ep = self.ep_end
 
     test_history = History(self.config)
