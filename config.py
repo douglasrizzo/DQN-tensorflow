@@ -32,22 +32,26 @@ class AgentConfig(object):
   _test_step = 5 * scale
   _save_step = _test_step * 10
 
+
 class EnvironmentConfig(object):
   env_name = 'Breakout-v0'
 
-  screen_width  = 84
+  screen_width = 84
   screen_height = 84
   max_reward = 1.
   min_reward = -1.
+
 
 class DQNConfig(AgentConfig, EnvironmentConfig):
   model = ''
   pass
 
+
 class M1(DQNConfig):
   backend = 'tf'
   env_type = 'detail'
   action_repeat = 1
+
 
 def get_config(FLAGS):
   if FLAGS.model == 'm1':

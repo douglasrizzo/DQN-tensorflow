@@ -6,12 +6,14 @@ import tensorflow as tf
 
 pp = pprint.PrettyPrinter().pprint
 
+
 def class_vars(obj):
-  return {k:v for k, v in inspect.getmembers(obj)
-      if not k.startswith('__') and not callable(k)}
+  return {k: v for k, v in inspect.getmembers(obj) if not k.startswith('__') and not callable(k)}
+
 
 class BaseModel(object):
   """Abstract object representing an Reader model."""
+
   def __init__(self, config):
     self._saver = None
     self.config = config
@@ -59,8 +61,7 @@ class BaseModel(object):
     model_dir = self.config.env_name
     for k, v in self._attrs.items():
       if not k.startswith('_') and k not in ['display']:
-        model_dir += "/%s-%s" % (k, ",".join([str(i) for i in v])
-            if type(v) == list else v)
+        model_dir += "/%s-%s" % (k, ",".join([str(i) for i in v]) if type(v) == list else v)
     return model_dir + '/'
 
   @property

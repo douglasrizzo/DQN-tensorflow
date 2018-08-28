@@ -3,7 +3,9 @@ import random
 import numpy as np
 from .utils import rgb2gray, imresize
 
+
 class Environment(object):
+
   def __init__(self, config):
     self.env = gym.make(config.env_name)
 
@@ -38,9 +40,9 @@ class Environment(object):
     action = self.env.action_space.sample()
     self._step(action)
 
-  @ property
+  @property
   def screen(self):
-    return imresize(rgb2gray(self._screen)/255., self.dims)
+    return imresize(rgb2gray(self._screen) / 255., self.dims)
     #return cv2.resize(cv2.cvtColor(self._screen, cv2.COLOR_BGR2YCR_CB)/255., self.dims)[:,:,0]
 
   @property
@@ -62,7 +64,9 @@ class Environment(object):
   def after_act(self, action):
     self.render()
 
+
 class GymEnvironment(Environment):
+
   def __init__(self, config):
     super(GymEnvironment, self).__init__(config)
 
@@ -86,7 +90,9 @@ class GymEnvironment(Environment):
     self.after_act(action)
     return self.state
 
+
 class SimpleGymEnvironment(Environment):
+
   def __init__(self, config):
     super(SimpleGymEnvironment, self).__init__(config)
 

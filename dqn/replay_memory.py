@@ -7,16 +7,20 @@ import numpy as np
 
 from .utils import save_npy, load_npy
 
+
 class ReplayMemory:
+
   def __init__(self, config, model_dir):
     self.model_dir = model_dir
 
     self.cnn_format = config.cnn_format
     self.memory_size = config.memory_size
-    self.actions = np.empty(self.memory_size, dtype = np.uint8)
-    self.rewards = np.empty(self.memory_size, dtype = np.integer)
-    self.screens = np.empty((self.memory_size, config.screen_height, config.screen_width), dtype = np.float16)
-    self.terminals = np.empty(self.memory_size, dtype = np.bool)
+    self.actions = np.empty(self.memory_size, dtype=np.uint8)
+    self.rewards = np.empty(self.memory_size, dtype=np.integer)
+    self.screens = np.empty(
+        (self.memory_size, config.screen_height, config.screen_width), dtype=np.float16
+    )
+    self.terminals = np.empty(self.memory_size, dtype=np.bool)
     self.history_length = config.history_length
     self.dims = (config.screen_height, config.screen_width)
     self.batch_size = config.batch_size
@@ -24,8 +28,8 @@ class ReplayMemory:
     self.current = 0
 
     # pre-allocate prestates and poststates for minibatch
-    self.prestates = np.empty((self.batch_size, self.history_length) + self.dims, dtype = np.float16)
-    self.poststates = np.empty((self.batch_size, self.history_length) + self.dims, dtype = np.float16)
+    self.prestates = np.empty((self.batch_size, self.history_length) + self.dims, dtype=np.float16)
+    self.poststates = np.empty((self.batch_size, self.history_length) + self.dims, dtype=np.float16)
 
   def add(self, screen, reward, action, terminal):
     assert screen.shape == self.dims
@@ -56,9 +60,9 @@ class ReplayMemory:
     # sample random indexes
     indexes = []
     while len(indexes) < self.batch_size:
-      # find random index 
+      # find random index
       while True:
-        # sample one index (ignore states wraping over 
+        # sample one index (ignore states wraping over
         index = random.randint(self.history_length, self.count - 1)
         # if wraps over current pointer, then get new one
         if index >= self.current and index - self.history_length < self.current:
@@ -69,7 +73,7 @@ class ReplayMemory:
           continue
         # otherwise use this index
         break
-      
+
       # NB! having index first is fastest in C-order matrices
       self.prestates[len(indexes), ...] = self.getState(index - 1)
       self.poststates[len(indexes), ...] = self.getState(index)
@@ -87,12 +91,22 @@ class ReplayMemory:
 
   def save(self):
     for idx, (name, array) in enumerate(
-        zip(['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'],
-            [self.actions, self.rewards, self.screens, self.terminals, self.prestates, self.poststates])):
+        zip(
+            ['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'], [
+                self.actions, self.rewards, self.screens, self.terminals, self.prestates,
+                self.poststates
+            ]
+        )
+    ):
       save_npy(array, os.path.join(self.model_dir, name))
 
   def load(self):
     for idx, (name, array) in enumerate(
-        zip(['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'],
-            [self.actions, self.rewards, self.screens, self.terminals, self.prestates, self.poststates])):
+        zip(
+            ['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'], [
+                self.actions, self.rewards, self.screens, self.terminals, self.prestates,
+                self.poststates
+            ]
+        )
+    ):
       array = load_npy(os.path.join(self.model_dir, name))
