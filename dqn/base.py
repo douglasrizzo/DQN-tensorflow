@@ -1,6 +1,6 @@
+import inspect
 import os
 import pprint
-import inspect
 
 import tensorflow as tf
 

@@ -1,6 +1,7 @@
-import gym
 import random
-import numpy as np
+
+import gym
+
 from .utils import rgb2gray, imresize
 
 

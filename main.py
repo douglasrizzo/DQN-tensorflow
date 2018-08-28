@@ -1,10 +1,12 @@
 from __future__ import print_function
+
 import random
 
+import tensorflow as tf
+
+from config import get_config
 from dqn.agent import Agent
 from dqn.environment import GymEnvironment, SimpleGymEnvironment
-from config import get_config
-import tensorflow as tf
 
 flags = tf.app.flags
 

@@ -1,18 +1,20 @@
 from __future__ import print_function
+
+import functools
 import os
-import time
 import random
-import numpy as np
-from tqdm import tqdm
+import time
+
 import gym
+import numpy as np
+import tensorflow as tf
+from tqdm import tqdm
 
 from .base import BaseModel
 from .history import History
-from .replay_memory import ReplayMemory
 from .ops import linear, conv2d, clipped_error
+from .replay_memory import ReplayMemory
 from .utils import get_time, save_pkl, load_pkl
-import tensorflow as tf
-import functools
 
 
 class Agent(BaseModel):

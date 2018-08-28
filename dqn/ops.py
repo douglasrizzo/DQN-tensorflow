@@ -1,5 +1,4 @@
 import tensorflow as tf
-from tensorflow.contrib.layers.python.layers import initializers
 
 
 def clipped_error(x):

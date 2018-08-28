@@ -2,7 +2,7 @@
 
 import os
 import random
-import logging
+
 import numpy as np
 
 from .utils import save_npy, load_npy
