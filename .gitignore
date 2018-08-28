@@ -87,3 +87,5 @@ target/
 Session.vim
 .netrwhist
 *~
+
+\.idea/
