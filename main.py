@@ -6,7 +6,7 @@ import tensorflow as tf
 
 from config import get_config
 from dqn.agent import Agent
-from dqn.environment import GymEnvironment, SimpleGymEnvironment
+from dqn.environment import MarloEnvironment, GymEnvironment, SimpleGymEnvironment
 
 flags = tf.app.flags
 
@@ -16,7 +16,8 @@ flags.DEFINE_boolean('dueling', False, 'Whether to use dueling deep q-network')
 flags.DEFINE_boolean('double_q', False, 'Whether to use double q-learning')
 
 # Environment
-flags.DEFINE_string('env_name', 'Breakout-v0', 'The name of gym environment to use')
+flags.DEFINE_boolean('marlo', False, 'True for marlo, false (default) for OpenAI Gym')
+flags.DEFINE_string('env_name', 'Breakout-v0', 'The name of gym or marlo environment to use')
 flags.DEFINE_integer('action_repeat', 4, 'The number of action to be repeated')
 
 # Etc
@@ -51,18 +52,21 @@ def main(_):
     )
 
     with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
+        # TODO a screen resolution problem from malmo can come from the getconfig function
         config = get_config(FLAGS) or FLAGS
-
-        if config.env_type == 'simple':
-            env = SimpleGymEnvironment(config)
-        else:
-            env = GymEnvironment(config)
 
         if not tf.test.is_gpu_available() and FLAGS.use_gpu:
             raise Exception("use_gpu flag is true when no GPUs are available")
 
         if not FLAGS.use_gpu:
             config.cnn_format = 'NHWC'
+
+        if config.env_type == 'simple':
+            env = SimpleGymEnvironment(config)
+        elif FLAGS.marlo:
+            env = MarloEnvironment(config)
+        else:
+            env = GymEnvironment(config)
 
         agent = Agent(config, env, sess)
 
