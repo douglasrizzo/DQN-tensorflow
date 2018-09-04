@@ -20,7 +20,7 @@ from .utils import get_time, save_pkl, load_pkl
 class Agent(BaseModel):
 
     def __init__(self, config, environment, sess):
-        super(Agent, self).__init__(config)
+        super().__init__(config)
         self.sess = sess
         self.weight_dir = 'weights'
 
@@ -88,8 +88,12 @@ class Agent(BaseModel):
                         max_ep_reward, min_ep_reward, avg_ep_reward = 0, 0, 0
 
                     print(
-                        '\navg_r: %.4f, avg_l: %.6f, avg_q: %3.6f, avg_ep_r: %.4f, max_ep_r: %.4f, min_ep_r: %.4f, # game: %d' \
-                        % (avg_reward, avg_loss, avg_q, avg_ep_reward, max_ep_reward, min_ep_reward, num_game))
+                        '\navg_r: {:.4f}, avg_l: {:.6f}, avg_q: {:3.6f}, avg_ep_r: {:.4f}, max_ep_r: {:.4f}, min_ep_r: {:.4f}, # game: %d'.
+                        format(
+                            avg_reward, avg_loss, avg_q, avg_ep_reward, max_ep_reward,
+                            min_ep_reward, num_game
+                        )
+                    )
 
                     if max_avg_ep_reward * 0.9 <= avg_ep_reward:
                         self.step_assign_op.eval({self.step_input: self.step + 1})

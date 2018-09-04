@@ -17,9 +17,13 @@ class ReplayMemory:
         self.memory_size = config.memory_size
         self.actions = np.empty(self.memory_size, dtype=np.uint8)
         self.rewards = np.empty(self.memory_size, dtype=np.integer)
+
         self.screens = np.empty(
             (self.memory_size, config.screen_height, config.screen_width), dtype=np.float16
         )
+
+        print('memory size in bytes: {}'.format(self.screens.nbytes))
+
         self.terminals = np.empty(self.memory_size, dtype=np.bool)
         self.history_length = config.history_length
         self.dims = (config.screen_height, config.screen_width)
@@ -45,8 +49,8 @@ class ReplayMemory:
         self.count = max(self.count, self.current + 1)
         self.current = (self.current + 1) % self.memory_size
 
-    def getState(self, index):
-        assert self.count > 0, "replay memory is empy, use at least --random_steps 1"
+    def get_state(self, index):
+        assert self.count > 0, 'replay memory is empty, use at least --random_steps 1'
         # normalize index to expected range, allows negative indexes
         index = index % self.count
         # if is not in the beginning of matrix
@@ -79,8 +83,8 @@ class ReplayMemory:
                 break
 
             # NB! having index first is fastest in C-order matrices
-            self.prestates[len(indexes), ...] = self.getState(index - 1)
-            self.poststates[len(indexes), ...] = self.getState(index)
+            self.prestates[len(indexes), ...] = self.get_state(index - 1)
+            self.poststates[len(indexes), ...] = self.get_state(index)
             indexes.append(index)
 
         actions = self.actions[indexes]

@@ -73,9 +73,13 @@ class MarloEnvironment(Environment):
         super().__init__(config)
 
         self._client_pool = marlo.launch_clients(1)
-        join_tokens = marlo.make(config.env_name,
-                                 params={"client_pool": self._client_pool,
-                                         "videoResolution": [config.screen_width, config.screen_height]})
+        join_tokens = marlo.make(
+            config.env_name,
+            params={
+                "client_pool": self._client_pool,
+                "videoResolution": [config.screen_width, config.screen_height]
+            }
+        )
         self.env = marlo.init(join_tokens[0])
 
     # TODO if this code works unchanged, find a way so that MarloEnvironment can inherit from GymEnvironment

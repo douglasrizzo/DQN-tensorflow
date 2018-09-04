@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import random
 
 import tensorflow as tf
@@ -8,7 +6,7 @@ from config import get_config
 from dqn.agent import Agent
 from dqn.environment import MarloEnvironment, GymEnvironment, SimpleGymEnvironment
 
-flags = tf.app.flags
+flags = tf.flags
 
 # Model
 flags.DEFINE_string('model', 'm1', 'Type of model')
