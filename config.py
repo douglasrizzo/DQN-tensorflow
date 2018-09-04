@@ -3,7 +3,14 @@ class AgentConfig(object):
     display = False
 
     max_step = 5000 * scale
-    memory_size = 100 * scale
+
+    # TODO use psutil do get total RAM and ndarray.nbytes and try
+    # to calculate the maximum size of the replay memory
+
+    # this is for gym
+    # memory_size = 100 * scale
+    # this is for marlo
+    memory_size = 10 * scale
 
     batch_size = 32
     random_start = 30
