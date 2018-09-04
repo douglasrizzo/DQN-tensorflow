@@ -41,30 +41,27 @@ class AgentConfig(object):
 
 
 class EnvironmentConfig(object):
-    env_name = 'Breakout-v0'
 
-    screen_width = 84
-    screen_height = 84
-    max_reward = 1.
-    min_reward = -1.
+    def __init__(self, env_name, screen_dim, max_reward=1., min_reward=-1.):
+        self.env_name = env_name
+        self.screen_width = screen_dim
+        self.screen_height = screen_dim
+        self.max_reward = max_reward
+        self.min_reward = min_reward
 
 
 class DQNConfig(AgentConfig, EnvironmentConfig):
     model = ''
-    pass
-
-
-class M1(DQNConfig):
     backend = 'tf'
     env_type = 'detail'
     action_repeat = 1
 
 
 def get_config(FLAGS):
-    if FLAGS.model == 'm1':
-        config = M1
-    elif FLAGS.model == 'm2':
-        config = M2
+    if FLAGS.marlo:
+        config = DQNConfig('MarLo-FindTheGoal-v0', 400)
+    else:
+        config = DQNConfig('Breakout-v0', 84)
 
     if FLAGS.use_gpu:
         config.cnn_format = 'NHWC'
