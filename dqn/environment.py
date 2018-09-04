@@ -104,6 +104,10 @@ class MarloEnvironment(Environment):
         self.after_act(action)
         return self.state
 
+    @property
+    def lives(self):
+        return 1
+
 
 class GymEnvironment(Environment):
 
