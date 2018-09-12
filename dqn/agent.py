@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import functools
+import logging
 import os
 import random
 import time
@@ -14,9 +15,9 @@ from tqdm import tqdm
 
 from .base import BaseModel
 from .history import History
-from .ops import linear, conv2d, clipped_error
+from .ops import clipped_error, conv2d, linear
 from .replay_memory import ReplayMemory
-from .utils import get_time, save_pkl, load_pkl
+from .utils import get_time, load_pkl, save_pkl
 
 
 class Agent(BaseModel):
@@ -29,6 +30,17 @@ class Agent(BaseModel):
         self.env = environment
         self.history = History(self.config)
         self.memory = ReplayMemory(self.config, self.model_dir)
+        self.save_screenshots = config.save_screenshots
+
+        # create logger
+        self._logger = logging.getLogger('dodo')
+        self._logger.setLevel(logging.DEBUG)
+        # create formatter
+        self._formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p'
+        )
+        # file handler for the logger
+        self._ch = None
 
         with tf.variable_scope('step'):
             self.step_op = tf.Variable(0, trainable=False, name='step')
@@ -52,7 +64,24 @@ class Agent(BaseModel):
             if self.save_screenshots:
                 os.mkdir(log_dir + '/screenshots')
 
+        if self._ch is not None:
+            self._logger.removeHandler(self._ch)
+
+        # create file handler and set level to debug
+        self._ch = logging.FileHandler(log_dir + '/log.log')
+        self._ch.setLevel(logging.DEBUG)
+        self._ch.setFormatter(self._formatter)  # add formatter to ch
+        self._logger.addHandler(self._ch)
+
         screen, reward, action, terminal = self.env.new_random_game()
+
+        self._logger.info("========EPISODE START========")
+        self._logger.info("N. of actions: %s", len(self.env.env.action_names[0]))
+
+        for action in sorted(self.env.env.action_names[0]):
+            self._logger.info(".... %s", action)
+
+        self._logger.info("Obs. space: %s", self.env.env.observation_space)
 
         for _ in range(self.history_length):
             self.history.add(screen)
@@ -70,6 +99,9 @@ class Agent(BaseModel):
             # 3. observe
             self.observe(screen, reward, action, terminal)
 
+            self._logger.info("Observation number: %s", str(self.step))
+            self._logger.info("action: %s (%s)", str(action), self.env.env.action_names[0][action])
+            self._logger.info("reward: %s", str(reward))
 
             if self.save_screenshots:
                 im = Image.fromarray(screen)
@@ -101,8 +133,8 @@ class Agent(BaseModel):
                         max_ep_reward, min_ep_reward, avg_ep_reward = 0, 0, 0
 
                     print(
-                        '\navg_r: {:.4f}, avg_l: {:.6f}, avg_q: {:3.6f}, avg_ep_r: {:.4f}, max_ep_r: {:.4f}, min_ep_r: {:.4f}, # game: %d'.
-                        format(
+                        '\navg_r: {:.4f}, avg_l: {:.6f}, avg_q: {:3.6f}, avg_ep_r: {:.4f}, max_ep_r: {:.4f}, min_ep_r: {:.4f}, # game: {:.1d}'
+                        .format(
                             avg_reward, avg_loss, avg_q, avg_ep_reward, max_ep_reward,
                             min_ep_reward, num_game
                         )
@@ -429,7 +461,7 @@ class Agent(BaseModel):
                 )
                 self.summary_ops[tag] = tf.summary.histogram(tag, self.summary_placeholders[tag])
 
-            self.writer = tf.summary.FileWriter('./logs/%s' % self.model_dir, self.sess.graph)
+            self.writer = tf.summary.FileWriter('./tf_logs/%s' % self.model_dir, self.sess.graph)
 
         tf.global_variables_initializer().run()
 
