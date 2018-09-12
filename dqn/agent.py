@@ -4,10 +4,12 @@ import functools
 import os
 import random
 import time
+from datetime import datetime
 
 import gym
 import numpy as np
 import tensorflow as tf
+from PIL import Image
 from tqdm import tqdm
 
 from .base import BaseModel
@@ -44,6 +46,12 @@ class Agent(BaseModel):
         max_avg_ep_reward = 0
         ep_rewards, actions = [], []
 
+        log_dir = 'personal_logs/' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+            if self.save_screenshots:
+                os.mkdir(log_dir + '/screenshots')
+
         screen, reward, action, terminal = self.env.new_random_game()
 
         for _ in range(self.history_length):
@@ -61,6 +69,11 @@ class Agent(BaseModel):
             screen, reward, terminal = self.env.act(action, is_training=True)
             # 3. observe
             self.observe(screen, reward, action, terminal)
+
+
+            if self.save_screenshots:
+                im = Image.fromarray(screen)
+                im.save(log_dir + '/screenshots/' + str(self.step) + '.png')
 
             if terminal:
                 screen, reward, action, terminal = self.env.new_random_game()

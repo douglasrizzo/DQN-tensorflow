@@ -68,4 +68,6 @@ def get_config(FLAGS):
     else:
         config.cnn_format = 'NCHW'
 
+    config.save_screenshots = FLAGS.save_screenshots
+
     return config

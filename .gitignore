@@ -1,6 +1,8 @@
 # misc
-logs
+tf_logs
 .DS_Store
+personal_logs
+.vscode
 
 # data
 samples

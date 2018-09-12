@@ -24,6 +24,7 @@ class BaseModel(object):
             self._attrs = class_vars(config)
         pp(self._attrs)
 
+        # FIXME why does this line repeat here?
         self.config = config
 
         for attr in self._attrs:
