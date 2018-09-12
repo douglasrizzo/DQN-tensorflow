@@ -1,6 +1,6 @@
 marlo
 scipy
-tensorflow
+tensorflow-gpu
 numpy
 tqdm
 gym[atari]
