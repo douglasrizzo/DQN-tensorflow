@@ -4,6 +4,7 @@ import os
 import random
 
 import numpy as np
+from psutil import virtual_memory
 
 from .utils import save_npy, load_npy
 
@@ -18,9 +19,25 @@ class ReplayMemory:
         self.actions = np.empty(self.memory_size, dtype=np.uint8)
         self.rewards = np.empty(self.memory_size, dtype=np.integer)
 
-        self.screens = np.empty(
-            (self.memory_size, config.screen_height, config.screen_width), dtype=np.float16
-        )
+        memory_dtype = np.float16
+
+        try:
+            self.screens = np.empty(
+                (self.memory_size, config.screen_height, config.screen_width), dtype=memory_dtype
+            )
+        except(MemoryError):
+            # the error message says it all
+            one_frame = config.screen_height * config.screen_width * memory_dtype().nbytes
+            requested_memory_bytes = self.memory_size * one_frame / 10e9
+            available_memory = virtual_memory().available
+            percentage_to_fill = .8
+            suggested_memory_size = int(available_memory * percentage_to_fill / one_frame)
+            raise MemoryError('''You asked for a replay memory of {} transitions, but there is not enough RAM 
+                  to store it (approximately {} GB is needed, you have {} GB free). You could try a replay memory 
+                  size of {}, which fills approximately {}% of the current available 
+                  memory (each frame is {} bytes).'''.format(self.memory_size, requested_memory_bytes,
+                                                             available_memory / 10e8, suggested_memory_size,
+                                                             percentage_to_fill*10, one_frame))
 
         print('memory size in bytes: {}'.format(self.screens.nbytes))
 
@@ -99,22 +116,22 @@ class ReplayMemory:
 
     def save(self):
         for idx, (name, array) in enumerate(
-            zip(
-                ['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'], [
-                    self.actions, self.rewards, self.screens, self.terminals, self.prestates,
-                    self.poststates
-                ]
-            )
+                zip(
+                    ['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'], [
+                        self.actions, self.rewards, self.screens, self.terminals, self.prestates,
+                        self.poststates
+                    ]
+                )
         ):
             save_npy(array, os.path.join(self.model_dir, name))
 
     def load(self):
         for idx, (name, array) in enumerate(
-            zip(
-                ['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'], [
-                    self.actions, self.rewards, self.screens, self.terminals, self.prestates,
-                    self.poststates
-                ]
-            )
+                zip(
+                    ['actions', 'rewards', 'screens', 'terminals', 'prestates', 'poststates'], [
+                        self.actions, self.rewards, self.screens, self.terminals, self.prestates,
+                        self.poststates
+                    ]
+                )
         ):
             array = load_npy(os.path.join(self.model_dir, name))
