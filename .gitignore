@@ -1,6 +1,7 @@
 # misc
 tf_logs
 .DS_Store
+.minecraft_ports
 personal_logs
 .vscode
 

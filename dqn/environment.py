@@ -2,6 +2,7 @@ import random
 
 import gym
 import marlo
+import os
 
 from .utils import rgb2gray, imresize
 
@@ -72,7 +73,14 @@ class MarloEnvironment(Environment):
     def __init__(self, config):
         super().__init__(config)
 
-        self._client_pool = marlo.launch_clients(1)
+        port = MarloEnvironment.check_running_minecraft()
+
+        if port is not None:
+            self._client_pool = [('localhost', port)]
+        else:
+            self._client_pool = marlo.launch_clients(1)
+            MarloEnvironment.log_running_minecraft(self._client_pool[0][1])
+
         join_tokens = marlo.make(
             config.env_name,
             params={
@@ -107,6 +115,43 @@ class MarloEnvironment(Environment):
     @property
     def lives(self):
         return 1
+
+    @staticmethod
+    def log_running_minecraft(port):
+        file = open('.minecraft_ports', 'a')
+        file.write(str(port))
+        file.close()
+
+    @staticmethod
+    def check_running_minecraft():
+        if not os.path.exists('.minecraft_ports'):
+            return None
+
+        import socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        file = open('.minecraft_ports', 'r')
+        lines = file.readlines()
+        file.close()
+
+        lines_to_keep = []
+        found_port = False
+        port=None
+        for line in lines:
+            current_port = int(line)
+            result = sock.connect_ex(('localhost', current_port))
+
+            if result == 0:
+                lines_to_keep.append(str(current_port))
+                if not found_port:
+                    port = current_port
+                    found_port = True
+
+        file = open('.minecraft_ports', 'w')
+        for line in lines_to_keep:
+            file.write(line)
+        file.close()
+
+        return port
 
 
 class GymEnvironment(Environment):
