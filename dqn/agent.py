@@ -76,9 +76,9 @@ class Agent(BaseModel):
         screen, reward, action, terminal = self.env.new_random_game()
 
         self._logger.info("========EPISODE START========")
-        self._logger.info("N. of actions: %s", len(self.env.env.action_names[0]))
+        self._logger.info("N. of actions: %s", len(self.env.action_names))
 
-        for action in sorted(self.env.env.action_names[0]):
+        for action in sorted(self.env.action_names):
             self._logger.info(".... %s", action)
 
         self._logger.info("Obs. space: %s", self.env.env.observation_space)
@@ -100,7 +100,7 @@ class Agent(BaseModel):
             self.observe(screen, reward, action, terminal)
 
             self._logger.info("Observation number: %s", str(self.step))
-            self._logger.info("action: %s (%s)", str(action), self.env.env.action_names[0][action])
+            self._logger.info("action: %s (%s)", str(action), self.env.action_names[action])
             self._logger.info("reward: %s", str(reward))
 
             if self.save_screenshots:
@@ -133,7 +133,7 @@ class Agent(BaseModel):
                         max_ep_reward, min_ep_reward, avg_ep_reward = 0, 0, 0
 
                     print(
-                        '\navg_r: {:.4f}, avg_l: {:.6f}, avg_q: {:3.6f}, avg_ep_r: {:.4f}, max_ep_r: {:.4f}, min_ep_r: {:.4f}, # game: {:.1d}'
+                        '\navg_r: {:.4f}, avg_l: {:.6f}, avg_q: {:3.6f}, avg_ep_r: {:.4f}, max_ep_r: {:.4f}, min_ep_r: {:.4f}, # game: {:d}'
                         .format(
                             avg_reward, avg_loss, avg_q, avg_ep_reward, max_ep_reward,
                             min_ep_reward, num_game

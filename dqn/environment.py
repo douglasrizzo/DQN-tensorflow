@@ -50,6 +50,10 @@ class Environment(object):
         return self.env.action_space.n
 
     @property
+    def action_names(self):
+        pass
+
+    @property
     def lives(self):
         return self.env.env.ale.lives()
 
@@ -111,6 +115,10 @@ class MarloEnvironment(Environment):
 
         self.after_act(action)
         return self.state
+
+    @property
+    def action_names(self):
+        return self.env.action_names
 
     @property
     def lives(self):
@@ -180,6 +188,10 @@ class GymEnvironment(Environment):
         self.after_act(action)
         return self.state
 
+    @property
+    def action_names(self):
+        return self.env.unwrapped.get_action_meanings()
+
 
 class SimpleGymEnvironment(Environment):
 
@@ -192,3 +204,7 @@ class SimpleGymEnvironment(Environment):
 
         self.after_act(action)
         return self.state
+
+    @property
+    def action_names(self):
+        return self.env.unwrapped.get_action_meanings()
