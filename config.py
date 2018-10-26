@@ -59,9 +59,9 @@ class DQNConfig(AgentConfig, EnvironmentConfig):
 
 def get_config(FLAGS):
     if FLAGS.marlo:
-        config = DQNConfig('MarLo-FindTheGoal-v0', 400)
+        config = DQNConfig(FLAGS.env_name, 400)
     else:
-        config = DQNConfig('Breakout-v0', 84)
+        config = DQNConfig(FLAGS.env_name, 84)
 
     if FLAGS.use_gpu:
         config.cnn_format = 'NHWC'
